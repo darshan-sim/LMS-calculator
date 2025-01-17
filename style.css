@@ -1,0 +1,106 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 100vw;
+    min-height: 100vh;
+    background-color: #F2F2F2;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: .9rem;
+}
+
+input {
+    background: none;
+    border: none;
+    outline: none;
+    letter-spacing: .1rem;
+    /* border: 1px solid red; */
+}
+
+input {
+    /* grid-column: span 5; */
+    padding: 0 .5rem 2rem .5rem;
+    text-align: end;
+    font-size: 2rem;
+}
+
+
+/* span:not(:last-child) {
+    margin-right: 3rem;
+} */
+
+.mr {
+    margin-right: 3rem;
+}
+
+.spacing>*:not(:last-child) {
+    display: inline;
+    /* border: 1px solid red; */
+}
+
+.rotate {
+    transition: transform 100ms ease-in-out;
+}
+
+.hover:hover .rotate {
+    transform: rotate(-180deg);
+}
+
+span {
+    font-weight: 600;
+    cursor: pointer;
+}
+
+button {
+    background: none;
+    border: none;
+}
+
+button {
+    padding: .5rem 1rem;
+    background-color: #F7F7F7;
+    border-radius: 3px;
+    font-weight: 500;
+    font-size: .9rem;
+}
+
+button[data-numbers] {
+    background: #FCFCFC;
+    font-size: 1.3rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.calculator {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: .3rem;
+    background-color: #F2F2F2;
+    padding: 1rem;
+    box-shadow: 0 0 .2rem .2rem rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    max-width: 25rem;
+}
+
+.span {
+    grid-column: span 5;
+    margin: 1rem 0;
+}
+
+.fade {
+    color: hsl(50, 0%, 70%);
+}
+
+.font-bold {
+    font-weight: 600;
+}
+
+.bg-blue {
+    background-color: #91C2E5;
+}
