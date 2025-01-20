@@ -70,6 +70,10 @@ button {
     font-size: .9rem;
 }
 
+button:hover {
+    box-shadow: 0 0 .3rem rgba(0, 0, 0, 0.2);
+}
+
 button[data-numbers] {
     background: #FCFCFC;
     font-size: 1.3rem;
