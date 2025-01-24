@@ -115,6 +115,7 @@ export const getAnswer = function(userExpression) {
 
     while (i < n) {
         const char = infix[i]
+        console.log({ "char": char })
         if (char === " ") { i++; continue; }
         if (char === "|") {
             let push;
@@ -123,18 +124,20 @@ export const getAnswer = function(userExpression) {
             i++;
             continue
         }
-        if (char === "|")
-            if (isOpenParen(char)) {
-                expression.push(char)
-                i++;
-            }
+        if (isOpenParen(char)) {
+            expression.push(char)
+            i++;
+            continue
+        }
         if (isCloseParen(char)) {
             expression.push(char)
             i++;
+            continue
         }
         if (isOperator(char)) {
             expression.push(char)
             i++
+            continue
         }
         if (isNumber(char)) {
             let num = ""
@@ -158,13 +161,12 @@ export const getAnswer = function(userExpression) {
             calFun += c
             i++
         }
-        // console.log({ "key": calFun, "value": isFn(calFun) })
         if (calFun !== "" && isFn(calFun)) {
-            // console.log({ "return": isFn(calFun) })
             expression.push(isFn(calFun))
             calFun = ""
         }
     }
+    console.log({ "expression": expression.join("") })
     const answer = eval(expression.join(""))
     updateHistory(answer)
     return answer
