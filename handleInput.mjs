@@ -1,3 +1,24 @@
+// class Parenthesis {
+//     constructor() {
+//         this.stack = []
+//     }
+//     push() {
+//         this.stack.push('(')
+//     }
+//     pop() {
+//         this.stack.pop
+//     }
+//     validParenthesis() {
+//         console.log({ "class": "" })
+//         return this.stack.length ? true : false
+//     }
+
+//     getStack() {
+//         return this.stack
+//     }
+// }
+// const parenthesis = new Parenthesis()
+
 // // v.1
 // export const handleInput = (() => {
 //     let isDecimal = false;
@@ -40,6 +61,7 @@ export const handleInput = (() => {
     let isDecimalNumber = false;
     const operatorsForDecimal = ['-', '+', '^', '*', '/', '(', ')']
     const operators = ['-', '+', '^', '*', '/', ]
+    let parenthesis = 0;
 
     const updateDecimalNumber = (input) => {
         if (input.length <= 0) {
@@ -73,10 +95,14 @@ export const handleInput = (() => {
     }
 
     const checkInput = (input) => {
-        console.log({ "Input": input })
+        const char = input[input.length - 1]
+        if (char === "(") {
+            parenthesis += 1
+        };
+        if (char === ')') {
+            parenthesis -= 1
+        }
         updateDecimalNumber(input)
-        console.log({ ".": checkForDecimal() })
-
         return checkOperator(input)
     };
 
@@ -87,6 +113,7 @@ export const handleInput = (() => {
     return {
         processInput: checkInput,
         processDecimalNumber: checkForDecimal,
-        processOperator: checkOperator
+        processOperator: checkOperator,
+        checkForParenthesis: () => parenthesis > 0,
     };
 })();
