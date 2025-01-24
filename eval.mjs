@@ -1,3 +1,5 @@
+// const allowedPattern = /^(\s*(\d+(\.\d+)?|pi|e|sin|cos|tan|asin|acos|atan|log|ln|sqrt|exp|sinh|cosh|tanh|\+|\-|\*|\/|\^|\(|\)|!)\s*)+$/;
+
 function isNumber(char) {
     return char >= '0' && char <= '9' || char === '.'
 }
@@ -15,15 +17,41 @@ function isOperator(char) {
     return operators.includes(char)
 }
 
+function degToRadSin(degrees) {
+    return Math.sin(degToRad(degrees));
+}
+
+function degToRadCos(degrees) {
+    return Math.cos(degToRad(degrees));
+}
+
+function degToRadTan(degrees) {
+    return Math.tan(degToRad(degrees));
+}
+
+function degToRad(degrees) {
+    return degrees * (Math.PI / 180);
+}
+
+const updateHistory = (() => {
+    const history = []
+    const update = (value) => {
+        history.push(value)
+        localStorage.setItem("history", JSON.stringify(history))
+        const ul = document.querySelector(".history-list")
+        const li = document.createElement('li')
+        li.innerText = value
+        ul.appendChild(li)
+    }
+    return update
+})()
+
 function isFn(string) {
     const calculatorFunctions = {
         "^": '**',
-        "sin": 'Math.sin',
-        "cos": 'Math.cos',
-        "tan": 'Math.tan',
-        "asin": 'Math.asin',
-        "acos": 'Math.acos',
-        "atan": 'Math.atan',
+        "sin": 'degToRadSin',
+        "cos": 'degToRadCos',
+        "tan": 'Math.tanh',
         "log": 'Math.log10',
         "ln": 'Math.log',
         "sqrt": 'Math.sqrt',
@@ -31,16 +59,23 @@ function isFn(string) {
         "factorial": 'factorial',
         "pi": 'Math.PI',
         "e": 'Math.E',
-        "sinh": 'Math.sinh',
-        "cosh": 'Math.cosh',
-        "tanh": 'Math.tanh',
-        "arsinh": 'Math.asinh',
-        "arcosh": 'Math.acosh',
-        "artanh": 'Math.atanh',
         "deg": 'degToRad',
         "rad": 'radToDeg',
+        "mod": "%"
     }
     return calculatorFunctions[string];
+}
+
+const getFectorial = (number) => {
+    if (number <= 1) return number
+    return number * getFectorial(number - 1)
+}
+
+const factorial = (number) => {
+    if (!eval(number)) {
+        return 0
+    }
+    return getFectorial(eval(number))
 }
 
 
@@ -48,30 +83,58 @@ const getValidInfix = (expression) => {
     return expression.replace(/%([^*\/+\-])/g, '/100*$1').replace(/%/g, '/100');
 }
 
+const completeExpression = (incompleteExpression) => {
+    let completeExpression = incompleteExpression
+    let i = 0
+    const n = incompleteExpression.length
+    let parenthesis = 0
+    while (i < n) {
+        if (incompleteExpression[i] === '(') parenthesis++;
+        if (incompleteExpression[i] === ')') parenthesis--;
+        i++
+    }
+    while (parenthesis > 0) {
+        completeExpression += ')'
+        parenthesis--
+    }
+    return completeExpression
+}
+const handleAbs = (abs) => {
+    return abs ? [")", false] : ["Math.abs(", true]
+}
+
 export const getAnswer = function(userExpression) {
-    const infix = getValidInfix(userExpression)
+    const validExpression = completeExpression(display.value)
+    updateHistory(validExpression)
+    const infix = getValidInfix(validExpression)
     const expression = []
 
     const n = infix.length
     let i = 0;
+    let abs = false
 
     while (i < n) {
         const char = infix[i]
         if (char === " ") { i++; continue; }
-        if (isOpenParen(char)) {
-            expression.push(char)
+        if (char === "|") {
+            let push;
+            [push, abs] = handleAbs(abs)
+            expression.push(push)
             i++;
             continue
         }
+        if (char === "|")
+            if (isOpenParen(char)) {
+                expression.push(char)
+                i++;
+            }
         if (isCloseParen(char)) {
             expression.push(char)
             i++;
-            continue
         }
         if (isOperator(char)) {
             expression.push(char)
             i++
-            continue
         }
         if (isNumber(char)) {
             let num = ""
@@ -82,26 +145,31 @@ export const getAnswer = function(userExpression) {
             expression.push(num)
             continue
         }
+        if (char === "!") {
+            expression.push(factorial(expression.pop()))
+            i++
+            continue
+        }
         let calFun = ""
         while (true) {
             const c = infix[i]
-            if (c === " ") { i++; continue }
-            if (isCloseParen(c) || isOpenParen(c) || isNumber(c) || isOperator(c)) break
+            if (c === " ") { i++; continue; }
+            if (!c || isCloseParen(c) || isOpenParen(c) || isNumber(c) || isOperator(c)) break
             calFun += c
             i++
         }
-        if (isFn(calFun)) {
+        // console.log({ "key": calFun, "value": isFn(calFun) })
+        if (calFun !== "" && isFn(calFun)) {
+            // console.log({ "return": isFn(calFun) })
             expression.push(isFn(calFun))
             calFun = ""
         }
-
     }
-    return eval(expression.join(""))
+    const answer = eval(expression.join(""))
+    updateHistory(answer)
+    return answer
 }
 
-// const Eval = (validInfix) => {
-//     const postfixExpression = getAnswer(validInfix)
-//     return
-// }
+// console.log(getAnswer('sinh(45)')) // 1
 
-// console.log(getAnswer('log(10)'))
+// log(10) + exp(2)

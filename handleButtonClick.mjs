@@ -4,32 +4,26 @@ export const handleButtonInput = (() => {
         "sin": 'sin(',
         "cos": 'cos(',
         "tan": 'tan(',
-        "asin": 'asin(',
-        "acos": 'acos(',
-        "atan": 'atan(',
-        "log": 'log10(',
-        "ln": 'log(',
+        "log": 'log(',
+        "ln": 'ln(',
         "sqrt": 'sqrt(',
-        "e": 'exp(',
+        "e": 'exp()',
         "!": "!",
-        "pi": "3.14",
-        "e": "e(",
-        "x2": "^2",
+        "pi": "pi",
+        "square": "^2",
         "|": "|",
-        "exp": "e^(",
+        "exp": "exp(",
         "mod": "mod",
-        "sqrt": "sqrt(",
         "(": "(",
         ")": ')',
         "+": "+",
         "-": "-",
         "/": "/",
         "*": "*",
-        // "deg": 'degToRad',
-        // "rad": 'radToDeg',
+        "1/": "1/",
+        "10x": "^10",
     }
     const handleClick = (displayValue, operation) => {
-        // console.log({ "handleClick": displayValue += calculatorFunctions[operation] })
         if (operation === "clear") return ""
         const value = calculatorFunctions[operation]
         if (value) {
@@ -37,7 +31,17 @@ export const handleButtonInput = (() => {
         }
         return displayValue
     }
+    const handleNegative = (displayValue) => {
+        if (displayValue.length === 0) return "-"
+        if (displayValue.length === 1 && displayValue === "-") return ""
+        if (displayValue[0] === '-') {
+            return displayValue.slice(1)
+        } else {
+            return "-" + displayValue
+        }
+    }
     return {
-        processClick: handleClick
+        processClick: handleClick,
+        processNagetive: handleNegative
     }
 })()
