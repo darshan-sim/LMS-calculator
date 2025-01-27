@@ -17,6 +17,7 @@ window.addEventListener('keydown', (e) => {
     }
     if (e.key === 'Enter' || e.key === '=') {
         e.preventDefault()
+        handleInput.resetParenthesis()
         const value = getAnswer(display.value)
         display.value = value
     }
@@ -27,6 +28,7 @@ window.addEventListener('keydown', (e) => {
 
 form.addEventListener('submit', (e) => {
     e.preventDefault()
+    handleInput.resetParenthesis()
     const value = getAnswer(display.value)
     display.value = value
 })
@@ -49,6 +51,7 @@ operationBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
 memoryBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-memory')
     const result = handleMemory.update(action, display.value)
+    handleInput.resetParenthesis()
     if (result) display.value = result
 }))
 

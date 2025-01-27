@@ -4,11 +4,14 @@ export const handleInput = (() => {
     const operators = ['-', '+', '^', '*', '/', ]
     let parenthesis = 0;
 
+    const resetParenthesis = () => parenthesis = 0;
+
     const updateDecimalNumber = (input) => {
         if (input.length <= 0) {
             isDecimalNumber = false;
             return
         }
+
         const lastChar = input[input.length - 1]
 
         if (lastChar === '.') {
@@ -20,7 +23,6 @@ export const handleInput = (() => {
             isDecimalNumber = false;
             return
         }
-        // if(lastChar)
     }
 
     const checkOperator = (input) => {
@@ -58,9 +60,8 @@ export const handleInput = (() => {
         processDecimalNumber: checkForDecimal,
         processOperator: checkOperator,
         checkForParenthesis: () => {
-            console.log({ "parenthesis": parenthesis });
             return parenthesis > 0;
         },
-        // updateParenthesis: updateParenthesis
+        resetParenthesis: resetParenthesis
     };
 })();

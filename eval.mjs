@@ -1,5 +1,3 @@
-// const allowedPattern = /^(\s*(\d+(\.\d+)?|pi|e|sin|cos|tan|asin|acos|atan|log|ln|sqrt|exp|sinh|cosh|tanh|\+|\-|\*|\/|\^|\(|\)|!)\s*)+$/;
-
 function isNumber(char) {
     return char >= '0' && char <= '9' || char === '.'
 }
@@ -82,7 +80,6 @@ const factorial = (number) => {
     return getFectorial(eval(number))
 }
 
-
 const getValidInfix = (expression) => {
     return expression.replace(/%([^*\/+\-])/g, '/100*$1').replace(/%/g, '/100');
 }
@@ -103,6 +100,7 @@ const completeExpression = (incompleteExpression) => {
     }
     return completeExpression
 }
+
 const handleAbs = (abs) => {
     return abs ? [")", false] : ["Math.abs(", true]
 }
@@ -169,7 +167,7 @@ export const getAnswer = function(userExpression) {
             calFun = ""
         }
     }
-    // console.log({ "expression": expression.join("") })
+
     const preprocessedExpression = preprocessExpression(expression.join(""));
 
     try {
@@ -181,14 +179,8 @@ export const getAnswer = function(userExpression) {
             updateHistory('0');
         }
     } catch (err) {
-        console.log({ "Join": preprocessedExpression });
-        console.log({ "eval": eval(preprocessedExpression) });
         updateHistory('0');
         return "0";
     }
     return null;
 }
-
-// console.log(getAnswer('sinh(45)')) // 1
-
-// log(10) + exp(2)
