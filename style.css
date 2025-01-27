@@ -112,7 +112,8 @@ button[data-numbers] {
     border-radius: 3px;
     max-width: 25rem;
     position: relative;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: visible;
 }
 
 .span {
@@ -222,4 +223,17 @@ li:hover {
 .clear-history {
     display: inline-block;
     margin-top: 1rem;
+}
+
+.worning {
+    position: absolute;
+    width: 100%;
+    border: 1px solid red;
+    text-align: center;
+    transform: translateY(0);
+    /* z-index: -100; */
+}
+
+.show-worning {
+    transform: translateY(-50%);
 }

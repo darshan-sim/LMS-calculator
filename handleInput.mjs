@@ -40,9 +40,10 @@ export const handleInput = (() => {
 
     const checkInput = (input) => {
         const char = input[input.length - 1]
+            // const value = input[0] === "0" && input.length <= 2 ? input.slice(1) : input
+        const value = input;
         if (char === "(") {
             parenthesis += 1
-            console.log({ "parenthesis": parenthesis })
         };
         if (char === ')' && parenthesis > 0) {
             parenthesis -= 1

@@ -146,7 +146,7 @@ export const getAnswer = function(userExpression) {
                 num += infix[i]
                 i++
             }
-            expression.push(num)
+            expression.push(Number(num))
             continue
         }
         if (char === "!") {
@@ -162,17 +162,26 @@ export const getAnswer = function(userExpression) {
             calFun += c
             i++
         }
-        if (calFun !== "" && isFn(calFun)) {
-            expression.push(isFn(calFun))
+        if (calFun !== " " && isFn(calFun)) {
+            if (['-', '+', '^', '*', '/', '(', ')'].includes(expression[expression.length - 1])) {
+                expression.push(isFn(calFun))
+            } else if (expression.length > 0 && calFun !== "^") {
+                expression.push("*")
+                expression.push(isFn(calFun))
+            } else {
+                expression.push(isFn(calFun))
+            }
             calFun = ""
         }
     }
 
-    const preprocessedExpression = preprocessExpression(expression.join(""));
-
     try {
-        const answer = eval(preprocessedExpression);
-        if (answer) {
+        let answer = eval(expression.join(""));
+        if (!isNaN(Number(answer))) {
+            answer = parseFloat(answer.toFixed(7));
+            if (answer === Math.floor(answer)) {
+                answer = Math.ceil(answer);
+            }
             updateHistory(answer);
             return answer;
         } else {
@@ -182,5 +191,5 @@ export const getAnswer = function(userExpression) {
         updateHistory('0');
         return "0";
     }
-    return null;
+    return "Error";
 }

@@ -18,8 +18,9 @@ window.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' || e.key === '=') {
         e.preventDefault()
         handleInput.resetParenthesis()
-        const value = getAnswer(display.value)
-        display.value = value
+        const result = getAnswer(display.value)
+        if (!Number.isNaN(result)) display.value = result
+        else display.value = "Error"
     }
     if (e.key === ')' && !handleInput.checkForParenthesis()) {
         e.preventDefault()
@@ -29,8 +30,7 @@ window.addEventListener('keydown', (e) => {
 form.addEventListener('submit', (e) => {
     e.preventDefault()
     handleInput.resetParenthesis()
-    const value = getAnswer(display.value)
-    display.value = value
+    display.value = getAnswer(display.value)
 })
 
 operationBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
@@ -52,7 +52,8 @@ memoryBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-memory')
     const result = handleMemory.update(action, display.value)
     handleInput.resetParenthesis()
-    if (result) display.value = result
+    if (!Number.isNaN(result)) display.value = result
+    else display.value = "Error"
 }))
 
 numberBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
@@ -88,10 +89,11 @@ function clearHistory() {
 
 document.addEventListener("DOMContentLoaded", () => {
     const toggleButton = document.createElement("button");
-    toggleButton.textContent = "Toggle Dark Mode";
+    toggleButton.textContent = "Toggle Mode";
     toggleButton.classList.add("toggle-dark-mode");
     toggleButton.addEventListener("click", toggleDarkMode);
     document.body.appendChild(toggleButton);
+    display.focus()
 });
 
 document.addEventListener('DOMContentLoaded', () => {
