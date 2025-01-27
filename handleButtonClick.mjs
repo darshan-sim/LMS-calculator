@@ -22,6 +22,7 @@ export const handleButtonInput = (() => {
         "*": "*",
         "1/": "1/",
         "10x": "^10",
+        "%": "%"
     }
     const handleClick = (displayValue, operation) => {
         if (operation === "clear") return ""
