@@ -80,7 +80,6 @@ const factorial = (number) => {
     return getFectorial(eval(number))
 }
 
-
 const getValidInfix = (expression) => {
     return expression.replace(/%([^*\/+\-])/g, '/100*$1').replace(/%/g, '/100');
 }
