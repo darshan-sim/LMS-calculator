@@ -7,7 +7,7 @@ export const handleButtonInput = (() => {
         "log": 'log(',
         "ln": 'ln(',
         "sqrt": 'sqrt(',
-        "e": 'exp()',
+        "e": 'e',
         "!": "!",
         "pi": "pi",
         "square": "^2",

@@ -1,5 +1,3 @@
-// const allowedPattern = /^(\s*(\d+(\.\d+)?|pi|e|sin|cos|tan|asin|acos|atan|log|ln|sqrt|exp|sinh|cosh|tanh|\+|\-|\*|\/|\^|\(|\)|!)\s*)+$/;
-
 function isNumber(char) {
     return char >= '0' && char <= '9' || char === '.'
 }
@@ -45,6 +43,10 @@ const updateHistory = (() => {
     }
     return update
 })()
+
+function preprocessExpression(expression) {
+    return expression.replace(/\b0+(\d)/g, '$1');
+}
 
 function isFn(string) {
     const calculatorFunctions = {
@@ -99,6 +101,7 @@ const completeExpression = (incompleteExpression) => {
     }
     return completeExpression
 }
+
 const handleAbs = (abs) => {
     return abs ? [")", false] : ["Math.abs(", true]
 }
@@ -115,7 +118,6 @@ export const getAnswer = function(userExpression) {
 
     while (i < n) {
         const char = infix[i]
-        console.log({ "char": char })
         if (char === " ") { i++; continue; }
         if (char === "|") {
             let push;
@@ -166,12 +168,20 @@ export const getAnswer = function(userExpression) {
             calFun = ""
         }
     }
-    console.log({ "expression": expression.join("") })
-    const answer = eval(expression.join(""))
-    updateHistory(answer)
-    return answer
+
+    const preprocessedExpression = preprocessExpression(expression.join(""));
+
+    try {
+        const answer = eval(preprocessedExpression);
+        if (answer) {
+            updateHistory(answer);
+            return answer;
+        } else {
+            updateHistory('0');
+        }
+    } catch (err) {
+        updateHistory('0');
+        return "0";
+    }
+    return null;
 }
-
-// console.log(getAnswer('sinh(45)')) // 1
-
-// log(10) + exp(2)

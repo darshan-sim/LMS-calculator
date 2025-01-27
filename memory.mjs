@@ -8,23 +8,19 @@ export const handleMemory = (() => {
             const answer = getAnswer(value)
             if (answer) memory += answer
             return answer
-            console.log({ "memory": memory })
         },
         "M-": (value) => {
             const answer = getAnswer(value)
             if (answer) memory -= answer
             return answer
-            console.log({ "memory": memory })
         },
         "MC": () => {
             memory = 0
-            console.log({ "memory": memory })
         },
         "MR": () => memory,
         "MS": (value) => {
             const answer = getAnswer(value)
-            if (answer) memory += answer
-            console.log({ "memory": memory })
+            if (answer) memory = answer
         },
     }
     const updateMemory = (operation, value) => {
