@@ -46,6 +46,10 @@ const updateHistory = (() => {
     return update
 })()
 
+function preprocessExpression(expression) {
+    return expression.replace(/\b0+(\d)/g, '$1');
+}
+
 function isFn(string) {
     const calculatorFunctions = {
         "^": '**',
@@ -115,7 +119,6 @@ export const getAnswer = function(userExpression) {
 
     while (i < n) {
         const char = infix[i]
-        console.log({ "char": char })
         if (char === " ") { i++; continue; }
         if (char === "|") {
             let push;
@@ -166,10 +169,24 @@ export const getAnswer = function(userExpression) {
             calFun = ""
         }
     }
-    console.log({ "expression": expression.join("") })
-    const answer = eval(expression.join(""))
-    updateHistory(answer)
-    return answer
+    // console.log({ "expression": expression.join("") })
+    const preprocessedExpression = preprocessExpression(expression.join(""));
+
+    try {
+        const answer = eval(preprocessedExpression);
+        if (answer) {
+            updateHistory(answer);
+            return answer;
+        } else {
+            updateHistory('0');
+        }
+    } catch (err) {
+        console.log({ "Join": preprocessedExpression });
+        console.log({ "eval": eval(preprocessedExpression) });
+        updateHistory('0');
+        return "0";
+    }
+    return null;
 }
 
 // console.log(getAnswer('sinh(45)')) // 1

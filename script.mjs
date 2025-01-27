@@ -17,12 +17,8 @@ window.addEventListener('keydown', (e) => {
     }
     if (e.key === 'Enter' || e.key === '=') {
         e.preventDefault()
-        const result = getAnswer(display.value)
-        if (result == "undefined" || !result) {
-            display.value = "Invlid Expression"
-        } else {
-            display.value = result
-        }
+        const value = getAnswer(display.value)
+        display.value = value
     }
     if (e.key === ')' && !handleInput.checkForParenthesis()) {
         e.preventDefault()
@@ -31,16 +27,20 @@ window.addEventListener('keydown', (e) => {
 
 form.addEventListener('submit', (e) => {
     e.preventDefault()
-    display.value = getAnswer(display.value)
+    const value = getAnswer(display.value)
+    display.value = value
 })
 
 operationBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
     const operation = e.target.getAttribute('data-operation')
     if (operation === "eval") {
-        display.value = getAnswer(display.value)
+        return
     }
     if (operation === "del") {
         display.value = display.value.slice(0, -1)
+    }
+    if (operation === ')' && !handleInput.checkForParenthesis()) {
+        return
     }
     const value = handleButtonInput.processClick(display.value, operation)
     display.value = handleInput.processInput(value)
@@ -48,8 +48,6 @@ operationBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
 
 memoryBtnElements.forEach(btn => btn.addEventListener('click', (e) => {
     const action = e.target.getAttribute('data-memory')
-    console.log({ "action": action })
-
     const result = handleMemory.update(action, display.value)
     if (result) display.value = result
 }))
@@ -71,10 +69,18 @@ display.addEventListener('input', (e) => {
     display.value = handleInput.processInput(display.value)
 })
 
+document.querySelector(".clear-history").addEventListener("click", () => clearHistory())
+
 function toggleDarkMode() {
     const currentTheme = document.documentElement.getAttribute("data-theme");
     const newTheme = currentTheme === "dark" ? "light" : "dark";
     document.documentElement.setAttribute("data-theme", newTheme);
+}
+
+function clearHistory() {
+    localStorage.setItem("history", "")
+    const historyList = document.querySelector('.history-list');
+    historyList.innerText = ""
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -88,26 +94,24 @@ document.addEventListener("DOMContentLoaded", () => {
 document.addEventListener('DOMContentLoaded', () => {
     const historyButton = document.querySelector('.history-button');
     const historyDiv = document.querySelector('.history');
+    const historyList = document.querySelector('.history-list');
+    const display = document.querySelector('#display');
 
     historyButton.addEventListener('click', () => {
         historyDiv.classList.toggle('history-show');
     });
 
-    historyDiv.addEventListener('click', (e) => {
-        display.value = e.target.innerHTML
-        historyDiv.classList.toggle('history-show')
-    })
-});
+    historyList.addEventListener('click', (e) => {
+        display.value = e.target.innerHTML;
+        historyDiv.classList.toggle('history-show');
+    });
 
-document.addEventListener('DOMContentLoaded', () => {
-    const history = JSON.parse(localStorage.getItem('history'))
-    const ul = document.querySelector(".history-list")
-    if (history) {
-
+    const history = JSON.parse(localStorage.getItem('history') || '[]');
+    if (Array.isArray(history)) {
         history.forEach(value => {
-            const li = document.createElement('li')
-            li.innerText = value
-            ul.appendChild(li)
-        })
+            const li = document.createElement('li');
+            li.innerText = value;
+            historyList.appendChild(li);
+        });
     }
 })
