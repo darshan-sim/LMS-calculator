@@ -24,7 +24,9 @@ function degToRad(degrees) {
 }
 
 const updateHistory = (() => {
-	const history = [];
+	const localHistory = localStorage.getItem("history");
+	let history = localHistory ? JSON.parse(localHistory) : [];
+	console.log(history);
 	const update = (value) => {
 		history.push(value);
 		localStorage.setItem("history", JSON.stringify(history));
