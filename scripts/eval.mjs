@@ -19,20 +19,14 @@ function degToRadSin(degrees) {
 	return Math.sin(degToRad(degrees));
 }
 
-function degToRadCos(degrees) {
-	return Math.cos(degToRad(degrees));
-}
-
-function degToRadTan(degrees) {
-	return Math.tan(degToRad(degrees));
-}
-
 function degToRad(degrees) {
 	return degrees * (Math.PI / 180);
 }
 
 const updateHistory = (() => {
-	const history = [];
+	const localHistory = localStorage.getItem("history");
+	let history = localHistory ? JSON.parse(localHistory) : [];
+	console.log(history);
 	const update = (value) => {
 		history.push(value);
 		localStorage.setItem("history", JSON.stringify(history));
@@ -43,10 +37,6 @@ const updateHistory = (() => {
 	};
 	return update;
 })();
-
-function preprocessExpression(expression) {
-	return expression.replace(/\b0+(\d)/g, "$1");
-}
 
 function isFn(string) {
 	const calculatorFunctions = {
@@ -68,16 +58,16 @@ function isFn(string) {
 	return calculatorFunctions[string];
 }
 
-const getFectorial = (number) => {
+const getFactorial = (number) => {
 	if (number <= 1) return number;
-	return number * getFectorial(number - 1);
+	return number * getFactorial(number - 1);
 };
 
 const factorial = (number) => {
 	if (!eval(number)) {
 		return 0;
 	}
-	return getFectorial(eval(number));
+	return getFactorial(eval(number));
 };
 
 const getValidInfix = (expression) => {
@@ -195,10 +185,6 @@ export const getAnswer = function (userExpression) {
 	try {
 		let answer = eval(expression.join(""));
 		if (!isNaN(Number(answer))) {
-			// answer = parseFloat(answer.toFixed(7));
-			// if (answer === Math.floor(answer)) {
-			//     answer = Math.ceil(answer);
-			// }
 			updateHistory(answer);
 			return answer;
 		} else {

@@ -64,7 +64,7 @@ numberBtnElements.forEach((btn) =>
 		const number = e.target.getAttribute("data-numbers");
 		if (!number) return;
 		if (number === "inverse") {
-			display.value = handleButtonInput.processNagetive(display.value);
+			display.value = handleButtonInput.processNegative(display.value);
 			return;
 		}
 		if (number === "." && handleInput.processDecimalNumber()) {

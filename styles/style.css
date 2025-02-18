@@ -50,8 +50,8 @@ input {
 }
 
 input {
-    padding: 0 .5rem 2rem .5rem;
-    text-align: end;
+    margin: 0 .5rem 2rem .5rem;
+    text-align: right;
     font-size: 2rem;
     color: var(--font-color);
 }
