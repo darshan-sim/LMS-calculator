@@ -43,6 +43,6 @@ export const handleButtonInput = (() => {
     }
     return {
         processClick: handleClick,
-        processNagetive: handleNegative
+        processNegative: handleNegative
     }
 })()
