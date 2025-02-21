@@ -1,67 +1,66 @@
 export const handleInput = (() => {
-    let isDecimalNumber = false;
-    const operatorsForDecimal = ['-', '+', '^', '*', '/', '(', ')']
-    const operators = ['-', '+', '^', '*', '/', ]
-    let parenthesis = 0;
+	let isDecimalNumber = false;
+	const operatorsForDecimal = ["-", "+", "^", "*", "/", "(", ")"];
+	const operators = ["-", "+", "^", "*", "/", "%"];
+	let parenthesis = 0;
 
-    const resetParenthesis = () => parenthesis = 0;
+	const resetParenthesis = () => (parenthesis = 0);
 
-    const updateDecimalNumber = (input) => {
-        if (input.length <= 0) {
-            isDecimalNumber = false;
-            return
-        }
+	const updateDecimalNumber = (input) => {
+		if (input.length <= 0) {
+			isDecimalNumber = false;
+			return;
+		}
 
-        const lastChar = input[input.length - 1]
+		const lastChar = input[input.length - 1];
 
-        if (lastChar === '.') {
-            isDecimalNumber = true
-            return
-        }
+		if (lastChar === ".") {
+			isDecimalNumber = true;
+			return;
+		}
 
-        if (operatorsForDecimal.includes(lastChar)) {
-            isDecimalNumber = false;
-            return
-        }
-    }
+		if (operatorsForDecimal.includes(lastChar)) {
+			isDecimalNumber = false;
+			return;
+		}
+	};
 
-    const checkOperator = (input) => {
-        if (input.length <= 0) {
-            return ""
-        }
-        const lastChar = input[input.length - 1]
-        const prevChar = input[input.length - 2]
+	const checkOperator = (input) => {
+		if (input.length <= 0) {
+			return "";
+		}
+		const lastChar = input[input.length - 1];
+		const prevChar = input[input.length - 2];
+		if (operators.includes(lastChar) && operators.includes(prevChar)) {
+			return input.slice(0, -2) + lastChar;
+		}
+		return input;
+	};
 
-        if (operators.includes(lastChar) && operators.includes(prevChar)) {
-            return input.slice(0, -2) + lastChar
-        }
-        return input
-    }
+	const checkInput = (input) => {
+		const char = input[input.length - 1];
+		const value = input;
+		if (char === "(") {
+			parenthesis += 1;
+		}
+		if (char === ")" && parenthesis > 0) {
+			parenthesis -= 1;
+		}
+		updateDecimalNumber(input);
+		return checkOperator(input);
+	};
 
-    const checkInput = (input) => {
-        const char = input[input.length - 1]
-        const value = input;
-        if (char === "(") {
-            parenthesis += 1
-        };
-        if (char === ')' && parenthesis > 0) {
-            parenthesis -= 1
-        }
-        updateDecimalNumber(input)
-        return checkOperator(input)
-    };
+	const checkForDecimal = () => {
+		return isDecimalNumber;
+	};
 
-    const checkForDecimal = () => {
-        return isDecimalNumber;
-    }
-
-    return {
-        processInput: checkInput,
-        processDecimalNumber: checkForDecimal,
-        processOperator: checkOperator,
-        checkForParenthesis: () => {
-            return parenthesis > 0;
-        },
-        resetParenthesis: resetParenthesis
-    };
+	return {
+		processInput: checkInput,
+		processDecimalNumber: checkForDecimal,
+		processOperator: checkOperator,
+		checkForParenthesis: () => {
+			return parenthesis > 0;
+		},
+		resetParenthesis: resetParenthesis
+	};
 })();

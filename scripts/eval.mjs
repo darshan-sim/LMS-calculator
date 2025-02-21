@@ -2,21 +2,13 @@ function isNumber(char) {
 	return (char >= "0" && char <= "9") || char === ".";
 }
 
-function isCloseParen(char) {
-	return char === ")";
-}
-
-function isOpenParen(char) {
-	return char === "(";
+function isParenthesis(char) {
+	return char === "(" || char === ")";
 }
 
 function isOperator(char) {
-	const operators = ["-", "+", "*", "/", "%"];
+	const operators = ["-", "+", "*", "/"];
 	return operators.includes(char);
-}
-
-function degToRadSin(degrees) {
-	return Math.sin(degToRad(degrees));
 }
 
 function degToRad(degrees) {
@@ -71,14 +63,14 @@ const factorial = (number) => {
 };
 
 const getValidInfix = (expression) => {
-	return expression.replace(/%([^*\/+\-])/g, "/100*$1").replace(/%/g, "/100");
+	return expression.replace(/(\d+)%/g, (_, num) => num / 100);
 };
 
 const completeExpression = (incompleteExpression) => {
 	let completeExpression = incompleteExpression;
 	let i = 0;
-	const n = incompleteExpression.length;
 	let parenthesis = 0;
+	const n = incompleteExpression.length;
 	while (i < n) {
 		if (incompleteExpression[i] === "(") parenthesis++;
 		if (incompleteExpression[i] === ")") parenthesis--;
@@ -96,21 +88,25 @@ const handleAbs = (abs) => {
 };
 
 export const getAnswer = function (userExpression) {
-	const validExpression = completeExpression(display.value);
+	const validExpression = completeExpression(userExpression);
+	//update history with complete expression
 	updateHistory(validExpression);
-	const infix = getValidInfix(validExpression);
-	const expression = [];
 
-	const n = infix.length;
+	const tokens = getValidInfix(validExpression);
+	console.log({ tokens });
+	const expression = [];
+	const n = tokens.length;
 	let i = 0;
 	let abs = false;
 
 	while (i < n) {
-		const char = infix[i];
+		//handle spaces, abs and parenthesis first
+		const char = tokens[i];
 		if (char === " ") {
 			i++;
 			continue;
 		}
+		//handle absolute value based on abs flag
 		if (char === "|") {
 			let push;
 			[push, abs] = handleAbs(abs);
@@ -118,53 +114,50 @@ export const getAnswer = function (userExpression) {
 			i++;
 			continue;
 		}
-		if (isOpenParen(char)) {
+		if (isParenthesis(char)) {
 			expression.push(char);
 			i++;
 			continue;
 		}
-		if (isCloseParen(char)) {
-			expression.push(char);
-			i++;
-			continue;
-		}
+		//
 		if (isOperator(char)) {
 			expression.push(char);
 			i++;
 			continue;
 		}
+		//handle operators
 		if (isNumber(char)) {
 			let num = "";
-			while (isNumber(infix[i])) {
-				num += infix[i];
+			while (isNumber(tokens[i])) {
+				num += tokens[i];
 				i++;
 			}
 			expression.push(Number(num));
 			continue;
 		}
+		//handle factorial before evaluating
 		if (char === "!") {
 			expression.push(factorial(expression.pop()));
 			i++;
 			continue;
 		}
+		//handle functions
 		let calFun = "";
 		while (true) {
-			const c = infix[i];
+			const c = tokens[i];
 			if (c === " ") {
 				i++;
 				continue;
 			}
-			if (
-				!c ||
-				isCloseParen(c) ||
-				isOpenParen(c) ||
-				isNumber(c) ||
-				isOperator(c)
-			)
-				break;
+			if (!c || isParenthesis(c) || isNumber(c) || isOperator(c)) break;
 			calFun += c;
 			i++;
 		}
+		/**
+		 * push the correct function to the expression
+		 * only the valid functions are pushed
+		 * safety for eval function
+		 */
 		if (calFun !== " " && isFn(calFun)) {
 			if (
 				["-", "+", "^", "*", "/", "(", ")"].includes(
@@ -180,8 +173,13 @@ export const getAnswer = function (userExpression) {
 			}
 			calFun = "";
 		}
+		console.log(tokens[i]);
 	}
-
+	/**
+	 * evaluate the expression
+	 * if the answer is a number update the history
+	 * else update the history with 0
+	 */
 	try {
 		let answer = eval(expression.join(""));
 		if (!isNaN(Number(answer))) {
@@ -192,7 +190,7 @@ export const getAnswer = function (userExpression) {
 		}
 	} catch (err) {
 		updateHistory("0");
-		return "0";
+		return "Error";
 	}
 	return "Error";
 };
