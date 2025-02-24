@@ -89,7 +89,6 @@ const handleAbs = (abs) => {
 
 export const getAnswer = function (userExpression) {
 	const validExpression = completeExpression(userExpression);
-	//update history with complete expression
 	updateHistory(validExpression);
 
 	const tokens = getValidInfix(validExpression);
@@ -173,7 +172,6 @@ export const getAnswer = function (userExpression) {
 			}
 			calFun = "";
 		}
-		console.log(tokens[i]);
 	}
 	/**
 	 * evaluate the expression
