@@ -21,9 +21,7 @@ export const handleMemory = (() => {
         MR: () => memory || 0,
         MS: (value) => {
             value = value ? value : "0";
-            console.log(value);
             const answer = getAnswer(value);
-            console.log("ans", answer);
             if (answer !== undefined && typeof answer === "number")
                 memory = answer;
             return answer;
