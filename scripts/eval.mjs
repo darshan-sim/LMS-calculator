@@ -15,27 +15,57 @@ function degToRad(degrees) {
 	return degrees * (Math.PI / 180);
 }
 
-const updateHistory = (() => {
+const updateHistory = (value) => {
 	const localHistory = localStorage.getItem("history");
 	let history = localHistory ? JSON.parse(localHistory) : [];
-	console.log(history);
-	const update = (value) => {
-		history.push(value);
-		localStorage.setItem("history", JSON.stringify(history));
-		const ul = document.querySelector(".history-list");
-		const li = document.createElement("li");
-		li.innerText = value;
+	history.unshift(value);
+	localStorage.setItem("history", JSON.stringify(history));
+	const ul = document.querySelector(".history-list");
+	const li = document.createElement("li");
+	li.innerText = value;
+	if (ul.firstChild) {
+		ul.insertBefore(li, ul.firstChild);
+	} else {
 		ul.appendChild(li);
-	};
-	return update;
-})();
+	}
+};
+
+function sin(x) {
+	x = degToRad(x);
+	let term = x;
+	let sum = 0;
+	let n = 1;
+	while (Math.abs(term) > 1e-15) {
+		sum += term;
+		term = (-term * x * x) / (2 * n * (2 * n + 1));
+		n++;
+	}
+	return sum;
+}
+
+function cos(x) {
+	x = degToRad(x);
+	let term = 1;
+	let sum = 0;
+	let n = 0;
+	while (Math.abs(term) > 1e-15) {
+		sum += term;
+		term = (-term * x * x) / ((2 * n + 1) * (2 * n + 2));
+		n++;
+	}
+	return sum;
+}
+
+function tan(x) {
+	return sin(x) / cos(x);
+}
 
 function isFn(string) {
 	const calculatorFunctions = {
 		"^": "**",
-		sin: "degToRadSin",
-		cos: "degToRadCos",
-		tan: "Math.tanh",
+		sin: "sin",
+		cos: "cos",
+		tan: "tan",
 		log: "Math.log10",
 		ln: "Math.log",
 		sqrt: "Math.sqrt",
@@ -43,8 +73,6 @@ function isFn(string) {
 		factorial: "factorial",
 		pi: "Math.PI",
 		e: "Math.E",
-		deg: "degToRad",
-		rad: "radToDeg",
 		mod: "%"
 	};
 	return calculatorFunctions[string];
@@ -63,7 +91,7 @@ const factorial = (number) => {
 };
 
 const getValidInfix = (expression) => {
-	return expression.replace(/(\d+)%/g, (_, num) => num / 100);
+	return expression.replace(/(\d+)%/g, (_, num) => "" + num / 100);
 };
 
 const completeExpression = (incompleteExpression) => {
@@ -90,9 +118,7 @@ const handleAbs = (abs) => {
 export const getAnswer = function (userExpression) {
 	const validExpression = completeExpression(userExpression);
 	updateHistory(validExpression);
-
 	const tokens = getValidInfix(validExpression);
-	console.log({ tokens });
 	const expression = [];
 	const n = tokens.length;
 	let i = 0;
@@ -118,7 +144,6 @@ export const getAnswer = function (userExpression) {
 			i++;
 			continue;
 		}
-		//
 		if (isOperator(char)) {
 			expression.push(char);
 			i++;
