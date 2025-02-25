@@ -74,7 +74,7 @@ function isFn(input:string):string|undefined {
 		exp: "Math.exp",
 		factorial: "factorial",
 		pi: "Math.PI",
-		e: "Math.E",
+		"e^": "Math.E**",
 		mod: "%"
 	};
 	return calculatorFunctions[input];
@@ -90,7 +90,7 @@ const factorial = (number:number):number => {
 };
 
 const getValidInfix = (expression:string):string => {
-	return expression.replace(/(\d+)%/g, (_, num) => "" + num / 100);
+	return expression.replace(/%(\d|\()/g, '/100 *$1').replace(/%/g, '/100');
 };
 
 const completeExpression = (incompleteExpression:string):string => {
@@ -213,7 +213,7 @@ export const getAnswer = function (userExpression:string):number|string {
 				)
 			) {
 				expression.push(isFn(calFun));
-			} else if (expression.length > 0 && calFun !== "^") {
+			} else if (expression.length > 0 && calFun !== "^" && calFun !== "mod") {
 				expression.push("*");
 				expression.push(isFn(calFun));
 			} else {
@@ -241,3 +241,5 @@ export const getAnswer = function (userExpression:string):number|string {
 	}
 	return "Error";
 };
+
+
