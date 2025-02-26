@@ -55,7 +55,6 @@ function tan(x) {
 }
 function isFn(input) {
     const calculatorFunctions = {
-        "^": "**",
         sin: "sin",
         cos: "cos",
         tan: "tan",
@@ -65,7 +64,7 @@ function isFn(input) {
         exp: "Math.exp",
         factorial: "factorial",
         pi: "Math.PI",
-        "e^": "Math.E**",
+        "e": "Math.E",
         mod: "%"
     };
     return calculatorFunctions[input];
@@ -79,7 +78,11 @@ const factorial = (number) => {
     return getFactorial(eval("" + number));
 };
 const getValidInfix = (expression) => {
-    return expression.replace(/%(\d|\()/g, '/100 *$1').replace(/%/g, '/100');
+    expression = expression
+        .replace(/%(\d|\()/g, "/100 *$1")
+        .replace(/%/g, "/100");
+    expression = expression.replace(/\^/g, "**");
+    return expression;
 };
 const completeExpression = (incompleteExpression) => {
     let completeExpression = incompleteExpression;

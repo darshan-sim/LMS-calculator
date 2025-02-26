@@ -64,7 +64,6 @@ type CalculatorFunctions = Record<string, string>;
 
 function isFn(input:string):string|undefined {
 	const calculatorFunctions: CalculatorFunctions = {
-		"^": "**",
 		sin: "sin",
 		cos: "cos",
 		tan: "tan",
@@ -74,7 +73,7 @@ function isFn(input:string):string|undefined {
 		exp: "Math.exp",
 		factorial: "factorial",
 		pi: "Math.PI",
-		"e^": "Math.E**",
+		"e": "Math.E",
 		mod: "%"
 	};
 	return calculatorFunctions[input];
@@ -89,8 +88,12 @@ const factorial = (number:number):number => {
 	return getFactorial(eval(""+number));
 };
 
-const getValidInfix = (expression:string):string => {
-	return expression.replace(/%(\d|\()/g, '/100 *$1').replace(/%/g, '/100');
+const getValidInfix = (expression:string) :string => {
+	expression = expression
+		.replace(/%(\d|\()/g, "/100 *$1")
+		.replace(/%/g, "/100");
+	expression = expression.replace(/\^/g, "**");
+	return expression;
 };
 
 const completeExpression = (incompleteExpression:string):string => {

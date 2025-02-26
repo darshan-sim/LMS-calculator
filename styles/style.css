@@ -40,6 +40,27 @@ body {
     color: var(--font-color);
     font-family: Arial, Helvetica, sans-serif;
     font-size: .9rem;
+    ::-webkit-scrollbar {
+            width: 8px;
+            /* Width of the scrollbar */
+    }
+
+    ::-webkit-scrollbar-track {
+        background: var(--scrollbar-track-background, #f1f1f1);
+        /* Background of the scrollbar track */
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: var(--scrollbar-thumb-background, #888);
+        /* Background of the scrollbar thumb */
+        border-radius: 10px;
+        /* Rounded corners for the scrollbar thumb */
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--scrollbar-thumb-hover-background, #555);
+        /* Background of the scrollbar thumb on hover */
+    }
 }
 
 input {
@@ -178,8 +199,15 @@ button[data-numbers] {
     top: .5rem;
     background: var(--history-background);
     padding-left: .5rem;
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
     transform: translateX(-100%);
     margin-top: 3rem;
+    -webkit-transition: -webkit-transform 200ms ease;
+    -moz-transition: -moz-transform 200ms ease;
+    -o-transition: -o-transform 200ms ease;
     transition: transform 200ms ease;
     overflow-y: scroll;
 }
@@ -203,7 +231,6 @@ li:hover {
 
 .history-list li {
     padding: .5rem;
-    margin: .5rem 0;
     border-radius: 3px;
 }
 
@@ -213,6 +240,7 @@ li:hover {
 
 .history-list li:nth-child(even) {
     color: var(--history-item-dark);
+    padding-bottom: 1rem;
 }
 
 .history-show {
