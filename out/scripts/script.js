@@ -6,6 +6,7 @@ import { handleMemory } from "./memory.js";
 const numberBtnElements = document.querySelectorAll("[data-numbers]");
 const operationBtnElements = document.querySelectorAll("[data-operation]");
 const memoryBtnElements = document.querySelectorAll("[data-memory]");
+const conversionBtnElements = document.querySelectorAll("[data-con]");
 const form = document.getElementById("calculator");
 const display = document.getElementById("display");
 window.addEventListener("keydown", (e) => {
@@ -59,9 +60,22 @@ memoryBtnElements.forEach((btn) => btn.addEventListener("click", (e) => {
     else
         display.value = "Error";
 }));
+conversionBtnElements.forEach(btn => {
+    btn.addEventListener("click", (e) => {
+        conversionBtnElements.forEach(btn => {
+            btn.classList.remove("selected-conversion");
+        });
+        const target = e.target;
+        target === null || target === void 0 ? void 0 : target.classList.add("selected-conversion");
+        const action = target === null || target === void 0 ? void 0 : target.getAttribute("data-con");
+        if (!action)
+            return;
+        handleButtonInput.toggleConversion(action);
+    });
+});
 numberBtnElements.forEach((btn) => btn.addEventListener("click", (e) => {
-    var _a;
-    const number = (_a = e.target) === null || _a === void 0 ? void 0 : _a.getAttribute("data-numbers");
+    const target = e.target;
+    const number = target === null || target === void 0 ? void 0 : target.getAttribute("data-numbers");
     if (!number)
         return;
     if (number === "inverse") {
