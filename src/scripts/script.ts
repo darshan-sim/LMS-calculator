@@ -6,6 +6,7 @@ import { handleMemory } from "./memory.js";
 const numberBtnElements = document.querySelectorAll("[data-numbers]");
 const operationBtnElements = document.querySelectorAll("[data-operation]");
 const memoryBtnElements = document.querySelectorAll("[data-memory]");
+const conversionBtnElements = document.querySelectorAll("[data-con]");
 
 const form = document.getElementById("calculator") as HTMLFormElement;
 const display = document.getElementById("display") as HTMLInputElement;
@@ -61,9 +62,23 @@ memoryBtnElements.forEach((btn) =>
 	})
 );
 
+conversionBtnElements.forEach(btn => {
+	btn.addEventListener("click", (e)=> {
+		conversionBtnElements.forEach(btn => {
+			btn.classList.remove("selected-conversion");
+		})
+		const target = (e.target as HTMLElement)
+		target?.classList.add("selected-conversion")
+		const action = target?.getAttribute("data-con");
+		if (!action) return;
+		handleButtonInput.toggleConversion(action)
+	})
+})
+
 numberBtnElements.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
-		const number = (e.target as HTMLElement)?.getAttribute("data-numbers");
+		const target = (e.target as HTMLElement)
+		const number = target?.getAttribute("data-numbers");
 		if (!number) return;
 		if (number === "inverse") {
 			display.value = handleButtonInput.processNegative(display.value);

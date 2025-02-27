@@ -5,6 +5,12 @@ export const handleButtonInput = (() => {
         "sin": 'sin(',
         "cos": 'cos(',
         "tan": 'tan(',
+        "asin": "asin(",
+        "acos": "acos(",
+        "atan": "atan(",
+        "cot": "cot(",
+        "sec": "sec(",
+        "csc": "csc(",
         "log": 'log(',
         "ln": 'ln(',
         "sqrt": 'sqrt(',
@@ -23,7 +29,10 @@ export const handleButtonInput = (() => {
         "*": "*",
         "1/": "1/",
         "10x": "^10",
-        "%": "%"
+        "%": "%",
+        "floor": "floor(",
+        "ceil": "ceil(",
+        "round": "round(",
     }
     const handleClick = (displayValue:string, operation:string):string => {
         if (operation === "clear") return ""
@@ -42,8 +51,18 @@ export const handleButtonInput = (() => {
             return "-" + displayValue
         }
     }
+    let isDeg = true;
+    const toggleConversion = (operation: string) => {
+        if(operation.toLocaleLowerCase() === "deg") {
+            isDeg = true
+        }else{
+            isDeg = false
+        }
+    }
     return {
         processClick: handleClick,
-        processNegative: handleNegative
+        processNegative: handleNegative,
+        toggleConversion,
+        getIsDeg: () => isDeg
     }
 })()
