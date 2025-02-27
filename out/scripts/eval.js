@@ -32,31 +32,60 @@ const updateHistory = (value) => {
     }
 };
 function sin(x) {
-    x = degToRad(x);
-    let term = x;
-    let sum = 0;
-    let n = 1;
-    while (Math.abs(term) > 1e-15) {
-        sum += term;
-        term = (-term * x * x) / (2 * n * (2 * n + 1));
-        n++;
-    }
-    return sum;
+    if (getIsDeg())
+        x = degToRad(x);
+    return Math.sin(x);
 }
 function cos(x) {
-    x = degToRad(x);
-    let term = 1;
-    let sum = 0;
-    let n = 0;
-    while (Math.abs(term) > 1e-15) {
-        sum += term;
-        term = (-term * x * x) / ((2 * n + 1) * (2 * n + 2));
-        n++;
-    }
-    return sum;
+    if (getIsDeg())
+        x = degToRad(x);
+    const result = Math.cos(x);
+    return Math.abs(result) < 1e-10 ? 0 : result;
 }
 function tan(x) {
-    return sin(x) / cos(x);
+    if (getIsDeg())
+        x = degToRad(x);
+    const cosValue = Math.cos(x);
+    if (Math.abs(cosValue) < 1e-15) {
+        throw new Error("Tangent is undefined for this value");
+    }
+    return Math.sin(x) / cosValue;
+}
+function asin(x) {
+    return getIsDeg() ? radToDeg(Math.asin(x)) : Math.asin(x);
+}
+function acos(x) {
+    return getIsDeg() ? radToDeg(Math.acos(x)) : Math.acos(x);
+}
+function atan(x) {
+    return getIsDeg() ? radToDeg(Math.atan(x)) : Math.atan(x);
+}
+function cot(x) {
+    if (getIsDeg())
+        x = degToRad(x);
+    const tanValue = Math.tan(x);
+    if (Math.abs(tanValue) < 1e-15) {
+        throw new Error("Cotangent is undefined for this value");
+    }
+    return 1 / tanValue;
+}
+function sec(x) {
+    if (getIsDeg())
+        x = degToRad(x);
+    const cosValue = Math.cos(x);
+    if (Math.abs(cosValue) < 1e-15) {
+        throw new Error("Secant is undefined for this value");
+    }
+    return 1 / cosValue;
+}
+function csc(x) {
+    if (getIsDeg())
+        x = degToRad(x);
+    const sinValue = Math.sin(x);
+    if (Math.abs(sinValue) < 1e-15) {
+        throw new Error("Cosecant is undefined for this value");
+    }
+    return 1 / sinValue;
 }
 function isFn(input) {
     const calculatorFunctions = {
@@ -124,7 +153,7 @@ const handleAbs = (abs) => {
     return abs ? [")", false] : ["Math.abs(", true];
 };
 function formatResult(value, decimalPlaces = 10) {
-    return parseFloat(value.toFixed(decimalPlaces));
+    return parseFloat(value.toFixed(decimalPlaces)); // Convert string back to number
 }
 export const getAnswer = function (userExpression) {
     const validExpression = completeExpression(userExpression);
@@ -135,13 +164,11 @@ export const getAnswer = function (userExpression) {
     let i = 0;
     let abs = false;
     while (i < n) {
-        //handle spaces, abs and parenthesis first
         const char = tokens[i];
         if (char === " ") {
             i++;
             continue;
         }
-        //handle absolute value based on abs flag
         if (char === "|") {
             let push;
             [push, abs] = handleAbs(abs);
@@ -149,17 +176,11 @@ export const getAnswer = function (userExpression) {
             i++;
             continue;
         }
-        if (isParenthesis(char)) {
+        if (isParenthesis(char) || isOperator(char)) {
             expression.push(char);
             i++;
             continue;
         }
-        if (isOperator(char)) {
-            expression.push(char);
-            i++;
-            continue;
-        }
-        //handle operators
         if (isNumber(char)) {
             let num = "";
             while (isNumber(tokens[i])) {
@@ -169,26 +190,9 @@ export const getAnswer = function (userExpression) {
             expression.push(Number(num));
             continue;
         }
-        //handle factorial before evaluating
         if (char === "!") {
             let last = expression.pop();
-            if (typeof last === "string" && last.includes(")")) {
-                let temp = [];
-                let closed = 1; // Track open-close balance
-                temp.push(last);
-                while (closed > 0) {
-                    last = expression.pop();
-                    temp.push(last);
-                    if (last === ")")
-                        closed++;
-                    if (last === "(")
-                        closed--;
-                }
-                temp.reverse();
-                last = temp.join(""); // Reconstruct the full expression
-            }
             const evaluatedLast = eval("" + last);
-            // Ensure it's a valid non-negative integer
             if (!Number.isInteger(evaluatedLast) || evaluatedLast < 0) {
                 throw new Error("Factorial only applies to non-negative integers.");
             }
@@ -196,7 +200,6 @@ export const getAnswer = function (userExpression) {
             i++;
             continue;
         }
-        //handle functions
         let calFun = "";
         while (true) {
             const c = tokens[i];
@@ -209,35 +212,16 @@ export const getAnswer = function (userExpression) {
             calFun += c;
             i++;
         }
-        /**
-         * push the correct function to the expression
-         * only the valid functions are pushed
-         * safety for eval function
-         */
         if (calFun !== " " && isFn(calFun)) {
-            if (["-", "+", "^", "*", "/", "(", ")"].includes("" + expression[expression.length - 1])) {
-                expression.push(isFn(calFun));
-            }
-            else if (expression.length > 0 && calFun !== "^" && calFun !== "mod") {
-                expression.push("*");
-                expression.push(isFn(calFun));
-            }
-            else {
-                expression.push(isFn(calFun));
-            }
+            expression.push(isFn(calFun));
             calFun = "";
         }
     }
-    /**
-     * evaluate the expression
-     * if the answer is a number update the history
-     * else update the history with 0
-     */
     try {
         let answer = eval(expression.join(""));
         if (!isNaN(Number(answer))) {
             updateHistory(answer);
-            return answer;
+            return formatResult(answer);
         }
         else {
             updateHistory("0");
@@ -245,7 +229,7 @@ export const getAnswer = function (userExpression) {
     }
     catch (err) {
         updateHistory("0");
-        return "Error";
+        return "Invalid Expression";
     }
-    return "Error";
+    return "Invalid Expression";
 };

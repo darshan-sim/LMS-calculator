@@ -77,8 +77,7 @@ conversionBtnElements.forEach(btn => {
 
 numberBtnElements.forEach((btn) =>
 	btn.addEventListener("click", (e) => {
-		const target = (e.target as HTMLElement)
-		const number = target?.getAttribute("data-numbers");
+		const number = (e.target as HTMLElement)?.getAttribute("data-numbers");
 		if (!number) return;
 		if (number === "inverse") {
 			display.value = handleButtonInput.processNegative(display.value);

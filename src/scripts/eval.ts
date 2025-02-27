@@ -59,17 +59,16 @@ function tan(x: number): number {
 }
 
 function asin(x: number): number {
-	return radToDeg(Math.asin(x));
+	return getIsDeg() ? radToDeg(Math.asin(x)) : Math.asin(x);
 }
 
 function acos(x: number): number {
-	return radToDeg(Math.acos(x));
+	return getIsDeg() ? radToDeg(Math.acos(x)) : Math.acos(x);
 }
 
 function atan(x: number): number {
-	return radToDeg(Math.atan(x));
+	return getIsDeg() ? radToDeg(Math.atan(x)) : Math.atan(x);
 }
-
 function cot(x: number): number {
 	if (getIsDeg()) x = degToRad(x);
 	const tanValue = Math.tan(x);
@@ -168,7 +167,7 @@ const handleAbs = (abs: boolean): [string, boolean] => {
 };
 
 function formatResult(value: number, decimalPlaces = 10): number {
-	return parseFloat(value.toFixed(decimalPlaces)); 
+	return parseFloat(value.toFixed(decimalPlaces)); // Convert string back to number
 }
 
 export const getAnswer = function (userExpression: string): number | string {

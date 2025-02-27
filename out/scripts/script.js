@@ -74,8 +74,8 @@ conversionBtnElements.forEach(btn => {
     });
 });
 numberBtnElements.forEach((btn) => btn.addEventListener("click", (e) => {
-    const target = e.target;
-    const number = target === null || target === void 0 ? void 0 : target.getAttribute("data-numbers");
+    var _a;
+    const number = (_a = e.target) === null || _a === void 0 ? void 0 : _a.getAttribute("data-numbers");
     if (!number)
         return;
     if (number === "inverse") {
