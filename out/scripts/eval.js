@@ -1,3 +1,5 @@
+import { handleButtonInput } from "./handleButtonClick.js";
+const { getIsDeg } = handleButtonInput;
 function isNumber(char) {
     return (char >= "0" && char <= "9") || char === ".";
 }
@@ -10,6 +12,9 @@ function isOperator(char) {
 }
 function degToRad(degrees) {
     return degrees * (Math.PI / 180);
+}
+function radToDeg(radians) {
+    return radians * (180 / Math.PI);
 }
 const updateHistory = (value) => {
     const localHistory = localStorage.getItem("history");
@@ -58,24 +63,37 @@ function isFn(input) {
         sin: "sin",
         cos: "cos",
         tan: "tan",
+        asin: "asin",
+        acos: "acos",
+        atan: "atan",
+        cot: "cot",
+        sec: "sec",
+        csc: "csc",
         log: "Math.log10",
         ln: "Math.log",
         sqrt: "Math.sqrt",
         exp: "Math.exp",
         factorial: "factorial",
         pi: "Math.PI",
-        "e": "Math.E",
-        mod: "%"
+        e: "Math.E",
+        mod: "%",
+        floor: "Math.floor",
+        ceil: "Math.ceil",
+        round: "Math.round",
     };
-    return calculatorFunctions[input];
+    return calculatorFunctions[input] || undefined;
 }
 const getFactorial = (number) => {
     if (number <= 1)
-        return number;
+        return 1;
     return number * getFactorial(number - 1);
 };
 const factorial = (number) => {
-    return getFactorial(eval("" + number));
+    const num = eval("" + number);
+    if (!Number.isInteger(num) || num < 0) {
+        throw new Error("Factorial only applies to non-negative integers.");
+    }
+    return getFactorial(num);
 };
 const getValidInfix = (expression) => {
     expression = expression
@@ -105,6 +123,9 @@ const completeExpression = (incompleteExpression) => {
 const handleAbs = (abs) => {
     return abs ? [")", false] : ["Math.abs(", true];
 };
+function formatResult(value, decimalPlaces = 10) {
+    return parseFloat(value.toFixed(decimalPlaces));
+}
 export const getAnswer = function (userExpression) {
     const validExpression = completeExpression(userExpression);
     updateHistory(validExpression);

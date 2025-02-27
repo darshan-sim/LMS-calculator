@@ -43,24 +43,19 @@ body {
 
     ::-webkit-scrollbar {
         width: 8px;
-        /* Width of the scrollbar */
     }
 
     ::-webkit-scrollbar-track {
         background: var(--scrollbar-track-background, #f1f1f1);
-        /* Background of the scrollbar track */
     }
 
     ::-webkit-scrollbar-thumb {
         background: var(--scrollbar-thumb-background, #888);
-        /* Background of the scrollbar thumb */
         border-radius: 10px;
-        /* Rounded corners for the scrollbar thumb */
     }
 
     ::-webkit-scrollbar-thumb:hover {
         background: var(--scrollbar-thumb-hover-background, #555);
-        /* Background of the scrollbar thumb on hover */
     }
 }
 
@@ -263,7 +258,6 @@ li:hover {
 
 .history-list li:nth-child(even) {
     color: var(--history-item-dark);
-    padding-bottom: 1rem;
     padding-bottom: 1rem;
 }
 
