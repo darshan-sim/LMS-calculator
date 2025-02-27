@@ -1,5 +1,3 @@
-import { handleButtonInput } from "./handleButtonClick.js";
-const { getIsDeg } = handleButtonInput;
 function isNumber(char) {
     return (char >= "0" && char <= "9") || char === ".";
 }
@@ -13,14 +11,10 @@ function isOperator(char) {
 function degToRad(degrees) {
     return degrees * (Math.PI / 180);
 }
-function radToDeg(radians) {
-    return radians * (180 / Math.PI);
-}
 const updateHistory = (value) => {
     const localHistory = localStorage.getItem("history");
     let history = localHistory ? JSON.parse(localHistory) : [];
     history.unshift(value);
-    // console.log({history})
     localStorage.setItem("history", JSON.stringify(history));
     const ul = document.querySelector(".history-list");
     const li = document.createElement("li");
@@ -33,97 +27,55 @@ const updateHistory = (value) => {
     }
 };
 function sin(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    return Math.sin(x);
+    x = degToRad(x);
+    let term = x;
+    let sum = 0;
+    let n = 1;
+    while (Math.abs(term) > 1e-15) {
+        sum += term;
+        term = (-term * x * x) / (2 * n * (2 * n + 1));
+        n++;
+    }
+    return sum;
 }
 function cos(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    const result = Math.cos(x);
-    return Math.abs(result) < 1e-10 ? 0 : result;
+    x = degToRad(x);
+    let term = 1;
+    let sum = 0;
+    let n = 0;
+    while (Math.abs(term) > 1e-15) {
+        sum += term;
+        term = (-term * x * x) / ((2 * n + 1) * (2 * n + 2));
+        n++;
+    }
+    return sum;
 }
 function tan(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    const cosValue = Math.cos(x);
-    if (Math.abs(cosValue) < 1e-15) {
-        throw new Error("Tangent is undefined for this value");
-    }
-    return Math.sin(x) / cosValue;
-}
-function asin(x) {
-    return radToDeg(Math.asin(x));
-}
-function acos(x) {
-    return radToDeg(Math.acos(x));
-}
-function atan(x) {
-    return radToDeg(Math.atan(x));
-}
-function cot(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    const tanValue = Math.tan(x);
-    if (Math.abs(tanValue) < 1e-15) {
-        throw new Error("Cotangent is undefined for this value");
-    }
-    return 1 / tanValue;
-}
-function sec(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    const cosValue = Math.cos(x);
-    if (Math.abs(cosValue) < 1e-15) {
-        throw new Error("Secant is undefined for this value");
-    }
-    return 1 / cosValue;
-}
-function csc(x) {
-    if (getIsDeg())
-        x = degToRad(x);
-    const sinValue = Math.sin(x);
-    if (Math.abs(sinValue) < 1e-15) {
-        throw new Error("Cosecant is undefined for this value");
-    }
-    return 1 / sinValue;
+    return sin(x) / cos(x);
 }
 function isFn(input) {
     const calculatorFunctions = {
         sin: "sin",
         cos: "cos",
         tan: "tan",
-        asin: "asin",
-        acos: "acos",
-        atan: "atan",
-        cot: "cot",
-        sec: "sec",
-        csc: "csc",
         log: "Math.log10",
         ln: "Math.log",
         sqrt: "Math.sqrt",
         exp: "Math.exp",
         factorial: "factorial",
         pi: "Math.PI",
-        e: "Math.E",
-        mod: "%",
-        floor: "Math.floor",
-        ceil: "Math.ceil",
-        round: "Math.round",
+        "e": "Math.E",
+        mod: "%"
     };
-    return calculatorFunctions[input] || undefined;
+    return calculatorFunctions[input];
 }
 const getFactorial = (number) => {
     if (number <= 1)
-        return 1;
+        return number;
     return number * getFactorial(number - 1);
 };
 const factorial = (number) => {
-    const num = eval("" + number);
-    if (!Number.isInteger(num) || num < 0) {
-        throw new Error("Factorial only applies to non-negative integers.");
-    }
-    return getFactorial(num);
+    return getFactorial(eval("" + number));
 };
 const getValidInfix = (expression) => {
     expression = expression
@@ -153,9 +105,6 @@ const completeExpression = (incompleteExpression) => {
 const handleAbs = (abs) => {
     return abs ? [")", false] : ["Math.abs(", true];
 };
-function formatResult(value, decimalPlaces = 10) {
-    return parseFloat(value.toFixed(decimalPlaces)); // Convert string back to number
-}
 export const getAnswer = function (userExpression) {
     const validExpression = completeExpression(userExpression);
     updateHistory(validExpression);
@@ -165,11 +114,13 @@ export const getAnswer = function (userExpression) {
     let i = 0;
     let abs = false;
     while (i < n) {
+        //handle spaces, abs and parenthesis first
         const char = tokens[i];
         if (char === " ") {
             i++;
             continue;
         }
+        //handle absolute value based on abs flag
         if (char === "|") {
             let push;
             [push, abs] = handleAbs(abs);
@@ -177,11 +128,17 @@ export const getAnswer = function (userExpression) {
             i++;
             continue;
         }
-        if (isParenthesis(char) || isOperator(char)) {
+        if (isParenthesis(char)) {
             expression.push(char);
             i++;
             continue;
         }
+        if (isOperator(char)) {
+            expression.push(char);
+            i++;
+            continue;
+        }
+        //handle operators
         if (isNumber(char)) {
             let num = "";
             while (isNumber(tokens[i])) {
@@ -191,9 +148,26 @@ export const getAnswer = function (userExpression) {
             expression.push(Number(num));
             continue;
         }
+        //handle factorial before evaluating
         if (char === "!") {
             let last = expression.pop();
+            if (typeof last === "string" && last.includes(")")) {
+                let temp = [];
+                let closed = 1; // Track open-close balance
+                temp.push(last);
+                while (closed > 0) {
+                    last = expression.pop();
+                    temp.push(last);
+                    if (last === ")")
+                        closed++;
+                    if (last === "(")
+                        closed--;
+                }
+                temp.reverse();
+                last = temp.join(""); // Reconstruct the full expression
+            }
             const evaluatedLast = eval("" + last);
+            // Ensure it's a valid non-negative integer
             if (!Number.isInteger(evaluatedLast) || evaluatedLast < 0) {
                 throw new Error("Factorial only applies to non-negative integers.");
             }
@@ -201,6 +175,7 @@ export const getAnswer = function (userExpression) {
             i++;
             continue;
         }
+        //handle functions
         let calFun = "";
         while (true) {
             const c = tokens[i];
@@ -213,16 +188,35 @@ export const getAnswer = function (userExpression) {
             calFun += c;
             i++;
         }
+        /**
+         * push the correct function to the expression
+         * only the valid functions are pushed
+         * safety for eval function
+         */
         if (calFun !== " " && isFn(calFun)) {
-            expression.push(isFn(calFun));
+            if (["-", "+", "^", "*", "/", "(", ")"].includes("" + expression[expression.length - 1])) {
+                expression.push(isFn(calFun));
+            }
+            else if (expression.length > 0 && calFun !== "^" && calFun !== "mod") {
+                expression.push("*");
+                expression.push(isFn(calFun));
+            }
+            else {
+                expression.push(isFn(calFun));
+            }
             calFun = "";
         }
     }
+    /**
+     * evaluate the expression
+     * if the answer is a number update the history
+     * else update the history with 0
+     */
     try {
         let answer = eval(expression.join(""));
         if (!isNaN(Number(answer))) {
             updateHistory(answer);
-            return formatResult(answer);
+            return answer;
         }
         else {
             updateHistory("0");
@@ -230,7 +224,7 @@ export const getAnswer = function (userExpression) {
     }
     catch (err) {
         updateHistory("0");
-        return "Invalid Expression";
+        return "Error";
     }
-    return "Invalid Expression";
+    return "Error";
 };
