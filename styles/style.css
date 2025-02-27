@@ -219,8 +219,15 @@ button[data-numbers] {
     -moz-transform: translateX(-100%);
     -ms-transform: translateX(-100%);
     -o-transform: translateX(-100%);
+    -webkit-transform: translateX(-100%);
+    -moz-transform: translateX(-100%);
+    -ms-transform: translateX(-100%);
+    -o-transform: translateX(-100%);
     transform: translateX(-100%);
     margin-top: 3rem;
+    -webkit-transition: -webkit-transform 200ms ease;
+    -moz-transition: -moz-transform 200ms ease;
+    -o-transition: -o-transform 200ms ease;
     -webkit-transition: -webkit-transform 200ms ease;
     -moz-transition: -moz-transform 200ms ease;
     -o-transition: -o-transform 200ms ease;
@@ -256,6 +263,7 @@ li:hover {
 
 .history-list li:nth-child(even) {
     color: var(--history-item-dark);
+    padding-bottom: 1rem;
     padding-bottom: 1rem;
 }
 
