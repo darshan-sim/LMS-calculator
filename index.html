@@ -34,16 +34,45 @@
 				<button class="font-bold" type="button" data-memory="M+">M+</button>
 				<button class="font-bold" type="button" data-memory="M-">M-</button>
 				<button class="font-bold" type="button" data-memory="MS">MS</button>
-				<div class="span dropdown-trig hover">
-					<span class="font-bold mr spacing" id="trigToggle">
-						<span>&#9727;</span>
-						<p>Trigonometry</p>
-						<i class="fa-solid fa-chevron-down rotate"></i>
-					</span>
-					<div class="dropdown" id="dropdown">
-						<button type="button" data-operation="sin">sin</button>
-						<button type="button" data-operation="cos">cos</button>
-						<button type="button" data-operation="tan">tan</button>
+				<!-- row -->
+				<button
+					type="button"
+					class="font-bold selected-conversion"
+					data-con="Deg">
+					Deg
+				</button>
+				<button type="button" class="font-bold" data-con="Red">Red</button>
+				<!-- row -->
+				<div class="span flex">
+					<div class="dropdown-div hover">
+						<span class="font-bold mr spacing" id="trigToggle">
+							<span>&#9727;</span>
+							<p>Trigonometry</p>
+							<i class="fa-solid fa-chevron-down rotate"></i>
+						</span>
+						<div class="dropdown" id="dropdown">
+							<button type="button" data-operation="sin">sin</button>
+							<button type="button" data-operation="cos">cos</button>
+							<button type="button" data-operation="tan">tan</button>
+							<button type="button" data-operation="asin">asin</button>
+							<button type="button" data-operation="acos">acos</button>
+							<button type="button" data-operation="atan">atan</button>
+							<button type="button" data-operation="cot">cot</button>
+							<button type="button" data-operation="sec">sec</button>
+							<button type="button" data-operation="csc">csc</button>
+						</div>
+					</div>
+					<div class="dropdown-div hover">
+						<span class="font-bold mr spacing" id="trigToggle">
+							<span>&#402;(x)</span>
+							<p>Function</p>
+							<i class="fa-solid fa-chevron-down rotate"></i>
+						</span>
+						<div class="dropdown" id="dropdown">
+							<button type="button" data-operation="floor">Floor</button>
+							<button type="button" data-operation="ceil">Ceil</button>
+							<button type="button" data-operation="round">Round</button>
+						</div>
 					</div>
 				</div>
 				<button type="button" data-operation="%">%</button>
@@ -95,6 +124,6 @@
 				<button type="submit" data-operation="eval" class="bg-blue">=</button>
 			</form>
 		</div>
-		<script src="scripts/script.mjs" type="module"></script>
+		<script type="module" src="out/scripts/script.js"></script>
 	</body>
 </html>
